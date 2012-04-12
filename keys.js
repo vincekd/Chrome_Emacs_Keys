@@ -13,10 +13,19 @@ function KeyReader( emacs ){
 	if( ! state.keydown ){
 	    return;
 	}
-	var str = getKeyInfo( ev );
-	//emacs.addStr( getKeyStr( ev ) );
-
-	console.log( str );
+	//var str = getKeyInfo( ev );
+	var action,str = getKeyInfo( ev );
+	emacs.addInput( str );
+	action = emacs.evalState();
+	if( action === false ){
+	    emacs.clearInput()
+	    return;
+	}
+	stopEvent( ev );
+	if( action === true ){
+	    return;
+	}
+	emacs.executeInput( action );
     }
 
     function keyup( ev ){
@@ -50,19 +59,23 @@ function KeyReader( emacs ){
 	    str += "M-";
 	}*/
 
-	var key,info = {
+	/*var key,info = {
 	    "ctrl": ev.ctrlKey,
 	    "alt": ev.altKey,
 	    "shift": ev.shiftKey,
 	    "meta": ev.metaKey,
+	    "esc": false,
 	    "key": ""
-	};
+	};*/
+	var key,str = ev.ctrlKey ? (emacs.modifiers["Control"]||"") : "";
+	str += ev.altKey ? (emacs.modifiers["Alt"]||"") : "";
+	str += ev.metaKey ? (emacs.modifers["Meta"]||"") : "";
 
-	key = ev.keyIdentifier || "error"; 
+	key = ev.keyIdentifier; 
 	if( key.slice( 0, 2 ) !== "U+" ){
 	    //return key;
-	    info.key = key;
-	    return info;
+	    //info.key = emacs.modifiers[key] || ""; //key
+	    return "";
 	} else if( that.correctKeys.hasOwnProperty( key ) ){
 	    key = ev.shiftKey ? that.correctKeys[key][1] : 
 		that.correctKeys[key][0];
@@ -72,11 +85,10 @@ function KeyReader( emacs ){
 	key = String.fromCharCode( parseInt( key, 16 ) );
 	key = ev.shiftKey ? key : key.toLowerCase();
 	
-	info.key += key;
+	str += key;
 
-	return info;
+	return str;
     }
-
 }
 
 KeyReader.prototype = {
