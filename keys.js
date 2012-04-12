@@ -3,19 +3,22 @@ function KeyReader( emacs ){
     var that = this;
     var state = emacs.state;
 
-    this.init = function(){
+    (function(){
 	document.addEventListener( "keydown", keydown, true );
 	document.addEventListener( "keyup", keyup, true );
 	document.addEventListener( "keypress", keypress, true );
-    };
+    }());
 
     function keydown( ev ){
 	if( ! state.keydown ){
 	    return;
 	}
 	//var str = getKeyInfo( ev );
-	var action,str = getKeyInfo( ev );
+	var str,action,obj = getKeyInfo( ev );
+
+	str = getModified( obj );
 	emacs.addInput( str );
+
 	action = emacs.evalState();
 	if( action === false ){
 	    emacs.clearInput()
@@ -35,9 +38,20 @@ function KeyReader( emacs ){
     }
 
     function keypress( ev ){
+	console.log( emacs );
 	if( ! state.keypress ){
+	    console.log( "not work" );
 	    return;
 	}
+	console.log( "works" );
+	if( emacs.bar ){
+	    if( ev.target.id !== emacs.CONSTS.bar_id ){
+		return;
+	    }
+	}
+	var obj = getKeyInfo();
+	console.log( obj );
+	//if( str.search( /[a-zA-Z0-9]/
     }
     
     function stopEvent( ev ){
@@ -51,31 +65,22 @@ function KeyReader( emacs ){
     }
 
     function getKeyInfo( ev ){
-	//return ctrl, alt, meta, shift, & letter
 
-	/*
-	var key,str = ev.ctrlKey ? "C-" : "";
-	if( ev.altKey || ev.metaKey ){
-	    str += "M-";
-	}*/
-
-	/*var key,info = {
+	var key,info = {
 	    "ctrl": ev.ctrlKey,
 	    "alt": ev.altKey,
 	    "shift": ev.shiftKey,
 	    "meta": ev.metaKey,
 	    "esc": false,
 	    "key": ""
-	};*/
-	var key,str = ev.ctrlKey ? (emacs.modifiers["Control"]||"") : "";
-	str += ev.altKey ? (emacs.modifiers["Alt"]||"") : "";
-	str += ev.metaKey ? (emacs.modifers["Meta"]||"") : "";
+	};
 
 	key = ev.keyIdentifier; 
 	if( key.slice( 0, 2 ) !== "U+" ){
 	    //return key;
 	    //info.key = emacs.modifiers[key] || ""; //key
-	    return "";
+	    info.key = key;
+	    return info;
 	} else if( that.correctKeys.hasOwnProperty( key ) ){
 	    key = ev.shiftKey ? that.correctKeys[key][1] : 
 		that.correctKeys[key][0];
@@ -85,10 +90,19 @@ function KeyReader( emacs ){
 	key = String.fromCharCode( parseInt( key, 16 ) );
 	key = ev.shiftKey ? key : key.toLowerCase();
 	
-	str += key;
+	info.key += key;
 
+	return info;
+    }
+
+    function getModified( obj ){
+	var str = obj.ctrl ? (emacs.modifiers["Control"]||"") : "";
+	str += obj.alt ? (emacs.modifiers["Alt"]||"") : "";
+	str += obj.meta ? (emacs.modifers["Meta"]||"") : "";
+	str += obj.key;
 	return str;
     }
+    
 }
 
 KeyReader.prototype = {

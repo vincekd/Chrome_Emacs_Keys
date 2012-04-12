@@ -1,9 +1,9 @@
 function Actions( emacs ){
     
     
-    this.sendChromeRequest = function( cmd, fn ){
-	chrome.extension.sendRequest({"name":cmd}, fn );
-    }
+
+    
+
 }
 
 Actions.prototype = {
@@ -71,30 +71,28 @@ Actions.prototype = {
     "back-history": function( count ){
 	window.history.go( -(count||1) );
     },
-    "remove-tab": function(){
-	//console.log( arguments.callee );
-	//var that = this;
-	//that.sendChromeRequest( arguments.callee, function(){} );
+    "remove-tab": function( action ){
+	that.chromeRequest( action );
     },
-    "next-tab": function(){
-
+    "next-tab": function( action ){
+	that.chromeRequest( action );	
     },
     "refresh-tab": function(){
-
+	window.location.reload();
     },
-    "previous-tab": function(){
-
+    "previous-tab": function( action ){
+	that.chromeRequest( action );
     },
-    "go-to-tab": function(){
-
+    "go-to-tab": function( action, num ){
+	//need index number
     },
-    "new-tab": function(){
-
+    "new-tab": function( action ){
+	that.chromeRequest( action );
     },
-    "bookmark-page": function(){
-
+    "bookmark-page": function( action ){
+	that.chromeRequest( action );	
     },
-    "search-bookmarks": function(){
-
+    "search-bookmarks": function( action ){
+	//search bookmarks to load
     }
 }
