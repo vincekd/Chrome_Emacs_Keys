@@ -1,0 +1,22 @@
+{
+    "background": {
+	"scripts": ["background.js"]
+    },
+    "content_scripts": [ {
+	"all_frames": true,
+	"css": [ "emacs_keys.css" ],
+	"js": [ "jquery-min.js", "emacs_keys.js" ],
+	"matches": [ "\u003Call_urls\u003E" ],
+	"run_at": "document_start"
+    } ],
+    "description": "emacs key bindings for chromium",
+    /*"icons": {
+      "128": "icons/icon128.png",
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png"
+      },*/
+    "name": "emacs keys",
+    "options_page": "options.html",
+    "permissions": [ "tabs", "bookmarks", "clipboardRead", "\u003Call_urls\u003E"],
+    "version": "1.1"
+}

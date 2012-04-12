@@ -1,0 +1,72 @@
+function KeyReader( emacs ){
+    
+    var that = this;
+    this.emacs = emacs;
+
+    this.init = function(){
+	$(document).bind( "keydown", keydown );
+	$(document).bind( "keyup", keyup );
+	$(document).bind( "keypress", keypress );
+    };
+
+    function keydown( ev ){
+	if( ! emacs.keydown ){
+	    return;
+	}
+	
+	console.log( getKeyStr( ev ) );
+
+    }
+
+    function keyup( ev ){
+	if( ! emacs.keyup ){
+	    return;
+	}
+    }
+
+    function keypress( ev ){
+	if( ! emacs.keypress ){
+	    return;
+	}
+    }
+
+    function getKeyStr( ev ){
+	var key,str = ev.ctrlKey ? "C-" : "";
+	if( ev.altKey || ev.metaKey ){
+	    str += "M-";
+	}
+	
+	key = ev.keyIdentifier; 
+	if( key.slice( 0, 2 ) !== "U+" ){
+	    return key;
+	} else if( that.correctKeys.hasOwnProperty( key ) ){
+	    key = ev.shiftKey ? correctKeys[key][1] : correctKeys[key][0];
+	}
+	
+	key = "0x" + key.slice( 2 );
+	key = String.fromCharCode( parseInt( key, 16 ) );
+	key = ev.shiftKey ? key : key.toLowerCase();
+	
+	str += key;
+
+	return str;
+    }
+
+}
+
+KeyReader.prototype = {
+    //keys don't work correctly on windows/linux?
+    "correctKeys": {
+	"U+00C0": ["U+0060", "U+007E"], // `~
+	"U+00BD": ["U+002D", "U+005F"], // -_
+	"U+00BB": ["U+003D", "U+002B"], // =+
+	"U+00DB": ["U+005B", "U+007B"], // [{
+	"U+00DD": ["U+005D", "U+007D"], // ]}
+	"U+00DC": ["U+005C", "U+007C"], // \|
+	"U+00BA": ["U+003B", "U+003A"], // ;:
+	"U+00DE": ["U+0027", "U+0022"], // '"
+	"U+00BC": ["U+002C", "U+003C"], // ,<
+	"U+00BE": ["U+002E", "U+003E"], // .>
+	"U+00BF": ["U+002F", "U+003F"] // /?
+    }
+};

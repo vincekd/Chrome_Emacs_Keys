@@ -1,0 +1,16 @@
+<html>
+<script type="text/javascript">
+var back = {
+    "remove-tab": function( tabid ){
+	chrome.tabs.remove( tabid );
+    }
+}
+console.log( "back" );
+chrome.extension.onRequest.addListener(
+    function( request, sender, sendResponse ){
+	console.log( request );
+	sendResponse( "hi" );
+    });
+);
+</script>
+</html>

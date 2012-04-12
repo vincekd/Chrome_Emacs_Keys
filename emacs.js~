@@ -1,0 +1,3 @@
+var keyreader = new KeyReader( {} );
+keyreader.init();
+console.log( keyreader );

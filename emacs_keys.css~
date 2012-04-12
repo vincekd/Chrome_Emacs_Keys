@@ -1,0 +1,32 @@
+.Emacs_Keys_Links {
+    margin:0px;
+    padding:0px;
+    background:#4A8;
+    position:absolute;
+    height:18px;
+    min-width:15px;
+    display:inline-block;
+    font-size:1em;
+    text-align:center;
+    opacity:.8;
+    border:1px solid #000;
+    border-radius:3px;
+    z-index:10000;
+}
+
+#Emacs_Keys_Input {
+    position:fixed;
+    margin:0px;
+    background:#4A8;
+    width:100%;
+    display:block;
+    z-index:10000;
+    text-align:left;
+    opacity:1;
+    border-top:3px solid #000;
+    bottom:0px;
+    left:0px;
+    padding:5px;
+    padding-left:15px;
+    padding-right:15px;
+}
