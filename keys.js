@@ -1,60 +1,15 @@
 function KeyReader( emacs ){
     
     var that = this;
-    var state = emacs.state;
+    document.addEventListener( "keydown", keyread, true );
+    document.addEventListener( "keyup", keyread, true );
+    //document.addEventListener( "keypress", keyread, true );
 
-    (function(){
-	document.addEventListener( "keydown", keydown, true );
-	document.addEventListener( "keyup", keyup, true );
-	document.addEventListener( "keypress", keypress, true );
-    }());
-
-    function keydown( ev ){
-	if( ! state.keydown ){
-	    return;
-	}
-	//var str = getKeyInfo( ev );
-	var str,action,obj = getKeyInfo( ev );
-
-	str = getModified( obj );
-	emacs.addInput( str );
-
-	action = emacs.evalState();
-	if( action === false ){
-	    emacs.clearInput()
-	    return;
-	}
-	stopEvent( ev );
-	if( action === true ){
-	    return;
-	}
-	emacs.executeInput( action );
+    function keyread( ev ){
+	stopEvent( ev, emacs.evalInput( getKeyInfo( ev ) ) );
     }
 
-    function keyup( ev ){
-	if( ! state.keyup ){
-	    return;
-	}
-    }
-
-    function keypress( ev ){
-	console.log( emacs );
-	if( ! state.keypress ){
-	    console.log( "not work" );
-	    return;
-	}
-	console.log( "works" );
-	if( emacs.bar ){
-	    if( ev.target.id !== emacs.CONSTS.bar_id ){
-		return;
-	    }
-	}
-	var obj = getKeyInfo();
-	console.log( obj );
-	//if( str.search( /[a-zA-Z0-9]/
-    }
-    
-    function stopEvent( ev ){
+    function stopEvent( ev, state ){
 	if( state.no_def ){
 	    ev.preventDefault();
 	}
@@ -71,15 +26,18 @@ function KeyReader( emacs ){
 	    "alt": ev.altKey,
 	    "shift": ev.shiftKey,
 	    "meta": ev.metaKey,
+	    "back": false,
 	    "esc": false,
-	    "key": ""
+	    "type": ev.type,
+	    "key": "",
+	    "cmd": ""
 	};
 
-	key = ev.keyIdentifier; 
+	key = ev.keyIdentifier;
 	if( key.slice( 0, 2 ) !== "U+" ){
 	    //return key;
 	    //info.key = emacs.modifiers[key] || ""; //key
-	    info.key = key;
+	    info.key = "";
 	    return info;
 	} else if( that.correctKeys.hasOwnProperty( key ) ){
 	    key = ev.shiftKey ? that.correctKeys[key][1] : 
@@ -87,11 +45,21 @@ function KeyReader( emacs ){
 	}
 	
 	key = "0x" + key.slice( 2 );
-	key = String.fromCharCode( parseInt( key, 16 ) );
-	key = ev.shiftKey ? key : key.toLowerCase();
-	
-	info.key += key;
+	key = parseInt( key, 16 );
+	if( key === 27 ){ //escape char
+	    info.esc = true;
+	    info.cmd = "ESC";
+	    return info;
+	} else if( key === 8 ){ //backspace
+	    info.back = true;
+	    info.cmd = "BACKSPACE";
+	    return info;
+	}
 
+	key = String.fromCharCode( key );
+	key = ev.shiftKey ? key : key.toLowerCase();
+	info.key = key;
+	getModified( info );
 	return info;
     }
 
@@ -100,14 +68,11 @@ function KeyReader( emacs ){
 	str += obj.alt ? (emacs.modifiers["Alt"]||"") : "";
 	str += obj.meta ? (emacs.modifers["Meta"]||"") : "";
 	str += obj.key;
-	return str;
+	obj.cmd = str;
     }
-    
-}
 
-KeyReader.prototype = {
     //keys don't work correctly on windows/linux?
-    "correctKeys": {
+    this.correctKeys = {
 	"U+00C0": ["U+0060", "U+007E"], // `~
 	"U+00BD": ["U+002D", "U+005F"], // -_
 	"U+00BB": ["U+003D", "U+002B"], // =+
@@ -119,5 +84,6 @@ KeyReader.prototype = {
 	"U+00BC": ["U+002C", "U+003C"], // ,<
 	"U+00BE": ["U+002E", "U+003E"], // .>
 	"U+00BF": ["U+002F", "U+003F"] // /?
-    }
-};
+    };
+    
+}

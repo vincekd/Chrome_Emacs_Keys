@@ -2,27 +2,12 @@ function ChromEmacs(){
     
     //private
     var that = this;
-    that.state = {
-	"keydown": true,   //read keydown
-	"keyup": false,    //read keyup
-	"keypress": false, //read keypress
-	"no_def": true,    //prevent default
-	"no_prop": true,   //stop propagation
-	"str": "",
-	"cur": {
-	    "links": {}
-	},
-	"operation": "",
-	"bar": false
-    };
-
-    //(that.defaultState());
-    //var actions = new Actions( that );
+    var state = that.defaultState();
     var keyreader = new KeyReader( that );
 
     
     this.evalState = function(){
-	var str = that.state.str;
+	var str = state.cmd;
 	for( var cmd in that.cmds ){
 	    if( that.cmds.hasOwnProperty( cmd ) ){
 		if( cmd.search( new RegExp( "^" + str ) ) !== -1 ){
@@ -36,14 +21,48 @@ function ChromEmacs(){
 	return false;
     };
 
+    this.evalInput = function( info ){
+	var ret = {"no_prop":false,"no_def":false};
+	if( ! state[info.type] ){
+	    return ret;
+	}
+
+	if( info.type === "keyup" ){
+	    //user input for active operations
+	    if( info.key === info.cmd && info.key !== "" ){
+		if( info.back ){
+		    state.str = state.str.slice( -1 );
+		} else {
+		    state.str += info.key
+		    that.actions[state.operation]( state.str );
+		}
+	    }
+	    return ret;
+	} else if( info.type === "keydown" ){
+	    //actions from keybindings
+	    state.cmd = trim( state.cmd + " " + info.cmd );
+	    var action = that.evalState();
+	    if( action === false ){
+		state.cmd = "";
+		return ret;
+	    } else if( action !== true ){
+		that.executeInput( action );
+	    }
+	    ret.no_prop = true;
+	    ret.no_def = true;
+	    return ret;
+	}
+	return state;
+    };
+
     this.chromeRequest = function( cmd, fn ){
 	fn = fn || function(r){console.log(r)};
 	chrome.extension.sendRequest({"name":cmd}, fn );
     };
 
     this.executeInput = function( action ){
-	that.clearInput();
-	that.state.operation = action;
+	state.cmd = "";
+	state.operation = action;
 	if( ! that.actions[action] ){
 	    that.chromeRequest( action );
 	    
@@ -72,7 +91,7 @@ function ChromEmacs(){
 	    window.scrollBy( 15, 0 );
 	},
 	"previous-line": function(){
-	    window.scrollBy( 0, -15 );
+	    window.scrollBy( 0, -15 );x
 	},
 	"next-line": function(){
 	    window.scrollBy( 0, 15 );	
@@ -83,17 +102,32 @@ function ChromEmacs(){
 	"scroll-up": function(){
 	    window.scrollBy( 0, parseInt((window.innerHeight * -.75), 10 ) );
 	},
-	"find-links-this-tab": function(){
+	"find-links-this-tab": function( str ){
 	    //find/num links
-	    findLinks();
-	    toggleBar( "visible" );
-	    that.state.keypress = true;
-	    console.log( that );
-	    console.log( this );
+	    console.log( "a" );
+	    if( ! str ){
+		findLinks();
+		toggleBar( "visible" );
+		state.keyup = true;
+		return;
+	    }
+	    var arr = [];
+	    $.each( state.links, function( key, val ){
+		if( key.search( new RegExp( that.CONSTS.links + "_" + str + ".*" ) ) === -1 ){ 
+			//&& val.txt.search( str ) === -1 ){
+		    $("#" + key ).remove();
+		    delete state.links[key];
+		} else {
+		    arr.push( val );
+		}
+	    });
+	    if( arr.length === 1 ){
+		window.location = arr[0].el.attr( "href" );
+	    }
 	},
 	"find-links-new-tab": function(){
 	    //find/num links
-	    findLinks();
+	    //findLinks();
 	},
 	"search-page": function(){
 	    //search page
@@ -107,12 +141,12 @@ function ChromEmacs(){
 	},
 	"execute-command": function(){
 	    //execute one of these commands by hand
-	    //toggleBar( "visible" );
+	    toggleBar( "visible" );
 	    //bindBar( "execute" );
 	},
 	"escape": function(){
 	    //esc/C-g - to exit out of any of these
-	    that.state = that.defaultState();
+	    state = that.defaultState();
 	    clearLinks();
 	    toggleBar( "hidden" );
 	},
@@ -134,6 +168,7 @@ function ChromEmacs(){
     };
 
     function clearLinks(){
+	state.links = {};
 	$("." + that.CONSTS.links ).remove();
     }
 
@@ -154,10 +189,9 @@ function ChromEmacs(){
 	    var pos = el.offset(),
 	    div = $("<div/>",{
 		"class": that.CONSTS.links,
-		"value": el.text(),
 		"id": that.CONSTS.links + "_" + i
 	    });
-	    that.state.cur.links[i] = {"el":el, "txt": el.text()};
+	    state.links[that.CONSTS.links + "_" + i] = {"el":el, "txt": el.text()};
 	    div.css({
 		"left": pos.left-5,
 		"top": pos.top-5
@@ -175,18 +209,21 @@ function ChromEmacs(){
 		return true;
 	    } else if( which === "hidden" ){
 		el.remove();
-		that.state.bar = false;
+		state.bar = false;
 	    }
 	} else {
 	    var div = $("<input/>", {
 		"type": "text"
 	    }).attr( "id", that.CONSTS.bar_id );
 	    $("body").append( div );
-	    that.state.bar = true;
+	    state.bar = true;
 	    div.focus();
 	}
     }
-
+    
+    function setBarText( str ){
+	$("#" + that.CONSTS.bar_id ).val( str );
+    }
 }
 
 ChromEmacs.prototype = {
@@ -202,12 +239,11 @@ ChromEmacs.prototype = {
 	    "no_def": true,    //prevent default
 	    "no_prop": true,   //stop propagation
 	    "str": "",
-	    "cur": {
-		"links": {}
-	    },
+	    "cmd": "",
+	    "links": {},
 	    "operation": "",
 	    "bar": false
-	};
+	}
     },
     "cmds": {
 	"<C>-d": "find-links-this-tab",
@@ -224,6 +260,7 @@ ChromEmacs.prototype = {
 	"<M>-<": "scroll-to-top",
 	"<M>-x": "execute-command",
 	"<C>-g": "escape",
+	"ESC ESC": "escape",
 	"<C>-x <C>-x": "remove-tab",
 	"<C>-c": "new-tab",
 	"<M>-n": "next-tab",
@@ -234,15 +271,8 @@ ChromEmacs.prototype = {
 	"Control": "<C>-",
 	"Alt": "<M>-",
 	"Meta": "<M>-",
-	"Win": "<M>-"
-    },
-    "addInput": function( str ){
-	var that = this;
-	that.state.str = trim( that.state.str + " " + str );
-    },
-    "clearInput": function(){
-	var that = this;
-	that.state = that.defaultState();
+	"Win": "<M>-",
+	"ESC": "<ESC>"
     }
 };
 
