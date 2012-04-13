@@ -10,12 +10,15 @@ var util = {
 	//chrome.tabs.update( tab.id, {"selected": true} );
     },
     "next-tab": function( tab, send ){
-	chrome.tabs.query({"index": (tab.index+1)}, function( arr ){
+	var index = parseInt( tab.index, 10 );
+	chrome.tabs.query({"index": (index+1),
+			   "windowId":tab.windowId}, function( arr ){
 	    if( arr.length > 0 ){
 		chrome.tabs.update( arr[0].id, {"selected": true} );
 	    } else {
 		//wrap around
-		chrome.tabs.query({"index":0}, function( arr ){
+		chrome.tabs.query({"index":0,
+				   "windowId":tab.windowId}, function( arr ){
 		    if( arr.length > 0 ){
 			chrome.tabs.update( arr[0].id, {"selected": true} );
 		    }
@@ -24,17 +27,18 @@ var util = {
 	});
     },
     "previous-tab": function( tab, send ){
-	if( (tab.index-1) >= 0 ){
-	    chrome.tabs.query({"index": (tab.index-1)}, function( arr ){
+	var index = parseInt( tab.index, 10 );
+	if( index > 0 ){
+	    chrome.tabs.query({"index": (index-1),
+			       "windowId":tab.windowId}, function( arr ){
 		if( arr.length > 0 ){
 		    chrome.tabs.update( arr[0].id, {"selected": true} );
 		} 
 	    });
 	} else {
 	    //wrap around
-	    chrome.tabs.query({}, function( arr ){
-		send( {"tabs":"hi"} );
-		if( arr.length > 0 ){
+	    chrome.tabs.query({"windowId":tab.windowId}, function( arr ){
+		if( arr.length > 1 ){
 		    //find biggest
 		    var cur = arr[0];
 		    for( var i = 0; i < arr.length; i++ ){
@@ -70,7 +74,6 @@ var util = {
 
 chrome.extension.onRequest.addListener(
     function( request, sender, send ){
-	send( request );
 	if( util.hasOwnProperty( request.name ) ){
 	    util[request.name]( sender.tab, send, request );
 	} else {

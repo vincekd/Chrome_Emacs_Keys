@@ -10,7 +10,7 @@ function ChromEmacs(){
 	var str = state.cmd;
 	for( var cmd in that.cmds ){
 	    if( that.cmds.hasOwnProperty( cmd ) ){
-		if( cmd.search( new RegExp( "^" + str ) ) !== -1 ){
+		if( escape( cmd ).search( new RegExp( "^" + escape( str ) ) ) !== -1 ){
 		    if( cmd === str ){
 			return that.cmds[cmd];
 		    }
@@ -120,7 +120,8 @@ function ChromEmacs(){
 		    });
 		} else if( info.enter ){
 		    if( link in state.cur.links ){
-			openUrl( state.cur.links[link].el.attr( "href" ) );
+			//openUrl( state.cur.links[link].el.attr( "href" ) );
+			openUrl( state.cur.links[link].el.get(0).href );
 		    }
 		} else if( info.key.length === 1 ){		    
 		    state.str += info.key;
@@ -136,7 +137,8 @@ function ChromEmacs(){
 			}
 		    });
 		    if( r.length === 1 ){
-			openUrl( r[0].el.attr( "href" ) );
+			//openUrl( r[0].el.attr( "href" ) );
+			openUrl( r[0].el.get(0).href );
 		    }
 		}
 		function openUrl( u ){
@@ -154,18 +156,33 @@ function ChromEmacs(){
 	},
 	"search-page": function(){
 	    //search page
-	    //toggleBar( "visible" );
-	    //bindBar( "search" );
+	    toggleBar( "visible" );
+	    state.keyup = true;
+	    state.fn = function( info ){
+		var o = state.cur.sopts;
+		if( info.back ){
+		    state.str = state.str.slice( 0, -1 );
+		} else if( info.enter ){
+
+		} else if( info.key.length === 1 ){
+		    state.str += info.key;
+		    
+		}
+		var t = window.find( state.str, o.cs, o.back, o.wrap,
+				     o.whole, o.frames, o.dialog );
+	    };
 	},
-	"search-regex": function( re ){
+	"search-regex": function(){
 	    //search page with regex
-	    //toggleBar( "visible" );
-	    //bindBar( "search" );
+	    toggleBar( "visible" );
+	    state.keyup = true;
+	    state.fn = function( info ){
+		
+	    };
 	},
 	"execute-command": function(){
 	    //execute one of these commands by hand
-	    toggleBar( "visible" );
-	    //bindBar( "execute" );
+	    //toggleBar( "visible" );
 	},
 	"escape": function(){
 	    //esc/C-g - to exit out of any of these
@@ -230,10 +247,8 @@ function ChromEmacs(){
 
     function url( url, tab ){
 	if( tab ){
-	    //window.location.href = url;
-	    window.open( url );
+	    window.location.href = url;
 	} else {
-	    //handle relative page links
 	    that.chromeRequest({"name":state.operation,"url":url});
 	}
     }
@@ -281,17 +296,25 @@ ChromEmacs.prototype = {
 	    "fn": null,
 	    "cur": {
 		"links": {},
-		"discards": {}
+		"discards": {},
+		"sopts": {
+		    "cs": false,
+		    "back": false,
+		    "wrap": true,
+		    "whole": false,
+		    "frames": true,
+		    "dialog": false
+		}
 	    },
 	    "operation": ""
 	}
     },
     "cmds": {
-	"<C>-d": "find-links-this-tab",
-	"<C>-D": "find-links-new-tab",
+	"<C>-D": "find-links-this-tab",
+	"<C>-d": "find-links-new-tab",
 	"<C>-b": "back-history",
-	"<C>-f": "forward-history",
-	"<C>-p": "previous-line",
+	"<C>-f f": "forward-history",
+	"<C>-p b": "previous-line",
 	"<C>-n": "next-line",
 	"<C>-v": "scroll-down",
 	"<M>-v": "scroll-up",
