@@ -7,7 +7,7 @@ var util = {
 			    "pinned": false});
     },
     "go-to-tab": function( tab, send ){
-	chrome.tabs.update( tab.id, {"selected": true} );
+	//chrome.tabs.update( tab.id, {"selected": true} );
     },
     "next-tab": function( tab, send ){
 	chrome.tabs.query({"index": (tab.index+1)}, function( arr ){
@@ -58,13 +58,21 @@ var util = {
 		});
 	    }
 	});
+    },
+    "find-links-new-tab": function( tab, send, req ){
+	chrome.tabs.create({"active":false,
+			    "pinned": false,
+			    "url":req.url,
+			    "openerTabId":tab.id
+			   });
     }
 };
 
 chrome.extension.onRequest.addListener(
     function( request, sender, send ){
+	send( request );
 	if( util.hasOwnProperty( request.name ) ){
-	    util[request.name]( sender.tab, send );
+	    util[request.name]( sender.tab, send, request );
 	} else {
 	    send( {"success": false} );
 	}

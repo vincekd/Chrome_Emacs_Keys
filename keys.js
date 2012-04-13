@@ -26,6 +26,7 @@ function KeyReader( emacs ){
 	    "alt": ev.altKey,
 	    "shift": ev.shiftKey,
 	    "meta": ev.metaKey,
+	    "enter": false,
 	    "back": false,
 	    "esc": false,
 	    "type": ev.type,
@@ -33,11 +34,23 @@ function KeyReader( emacs ){
 	    "cmd": ""
 	};
 
-	key = ev.keyIdentifier;
+	key = info.key = ev.keyIdentifier;
+	if( ev.keyCode === 27 ){ //escape char
+	    info.esc = true;
+	    info.cmd = key;
+	    return info;
+	} else if( ev.keyCode === 8 ){ //backspace
+	    info.back = true;
+	    info.cmd = key;
+	    return info;
+	} else if( ev.keyCode === 13 ){
+	    info.enter = true;
+	    info.cmd = key;
+	    return info;
+	}
+
+
 	if( key.slice( 0, 2 ) !== "U+" ){
-	    //return key;
-	    //info.key = emacs.modifiers[key] || ""; //key
-	    info.key = "";
 	    return info;
 	} else if( that.correctKeys.hasOwnProperty( key ) ){
 	    key = ev.shiftKey ? that.correctKeys[key][1] : 
@@ -46,15 +59,8 @@ function KeyReader( emacs ){
 	
 	key = "0x" + key.slice( 2 );
 	key = parseInt( key, 16 );
-	if( key === 27 ){ //escape char
-	    info.esc = true;
-	    info.cmd = "ESC";
-	    return info;
-	} else if( key === 8 ){ //backspace
-	    info.back = true;
-	    info.cmd = "BACKSPACE";
-	    return info;
-	}
+
+
 
 	key = String.fromCharCode( key );
 	key = ev.shiftKey ? key : key.toLowerCase();

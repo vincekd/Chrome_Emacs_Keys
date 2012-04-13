@@ -17,6 +17,6 @@
       },*/
     "name": "emacs keys",
     "options_page": "options.html",
-    "permissions": [ "tabs", "bookmarks", "clipboardRead", "\u003Call_urls\u003E"],
+    "permissions": [ "tabs", "bookmarks", "clipboardRead", "\u003Call_urls\u003E", "chrome://newtab" ],
     "version": "1.1"
 }

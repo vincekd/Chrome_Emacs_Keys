@@ -30,11 +30,8 @@ function ChromEmacs(){
 	if( info.type === "keyup" ){
 	    //user input for active operations
 	    if( info.key === info.cmd && info.key !== "" ){
-		if( info.back ){
-		    state.str = state.str.slice( -1 );
-		} else {
-		    state.str += info.key
-		    that.actions[state.operation]( state.str );
+		if( state.fn !== null ){
+		    state.fn( info );
 		}
 	    }
 	    return ret;
@@ -57,15 +54,14 @@ function ChromEmacs(){
 
     this.chromeRequest = function( cmd, fn ){
 	fn = fn || function(r){console.log(r)};
-	chrome.extension.sendRequest({"name":cmd}, fn );
+	chrome.extension.sendRequest( cmd, fn );
     };
 
     this.executeInput = function( action ){
 	state.cmd = "";
 	state.operation = action;
 	if( ! that.actions[action] ){
-	    that.chromeRequest( action );
-	    
+	    that.chromeRequest( {"name":action} );
 	} else {
 	    that.actions[action]();
 	}
@@ -102,32 +98,59 @@ function ChromEmacs(){
 	"scroll-up": function(){
 	    window.scrollBy( 0, parseInt((window.innerHeight * -.75), 10 ) );
 	},
-	"find-links-this-tab": function( str ){
+	"find-links-this-tab": function(){
+	    that.actions['find-links']( "this-tab" );
+	},
+	"find-links": function( tab ){
 	    //find/num links
-	    console.log( "a" );
-	    if( ! str ){
-		findLinks();
-		toggleBar( "visible" );
-		state.keyup = true;
-		return;
-	    }
-	    var arr = [];
-	    $.each( state.links, function( key, val ){
-		if( key.search( new RegExp( that.CONSTS.links + "_" + str + ".*" ) ) === -1 ){ 
-			//&& val.txt.search( str ) === -1 ){
-		    $("#" + key ).remove();
-		    delete state.links[key];
-		} else {
-		    arr.push( val );
+	    findLinks();
+	    toggleBar( "visible" );
+	    state.keyup = true;
+	    state.fn = function( info ){
+		var r,link = that.CONSTS.links + "_" + state.str;
+		if( info.back ){
+		    state.str = state.str.slice( 0, -1 );
+		    link = that.CONSTS.links + "_" + state.str;
+		    $.each( state.cur.discards, function( key, val ){
+			if( match( key, link ) || match( val.txt, state.str ) ){
+			    state.cur.links[key] = state.cur.discards[key];
+			    $("#" + key ).show();
+			    delete state.cur.discards[key];
+			}
+		    });
+		} else if( info.enter ){
+		    if( link in state.cur.links ){
+			openUrl( state.cur.links[link].el.attr( "href" ) );
+		    }
+		} else if( info.key.length === 1 ){		    
+		    state.str += info.key;
+		    link = that.CONSTS.links + "_" + state.str;
+		    r = [];
+		    $.each( state.cur.links, function( key, val ){
+			if( !match( key, link ) && !match( val.txt, state.str ) ){
+			    state.cur.discards[key] = state.cur.links[key];
+			    $("#" + key ).hide();
+			    delete state.cur.links[key];
+			} else {
+			    r.push( val );
+			}
+		    });
+		    if( r.length === 1 ){
+			openUrl( r[0].el.attr( "href" ) );
+		    }
 		}
-	    });
-	    if( arr.length === 1 ){
-		window.location = arr[0].el.attr( "href" );
-	    }
+		function openUrl( u ){
+		    if( tab === "this-tab" ){
+			url( u, true );
+		    } else if( tab === "new-tab" ){
+			url( u, false );
+			that.actions['escape']();
+		    }
+		}
+	    };
 	},
 	"find-links-new-tab": function(){
-	    //find/num links
-	    //findLinks();
+	    that.actions['find-links']( "new-tab" );
 	},
 	"search-page": function(){
 	    //search page
@@ -166,6 +189,10 @@ function ChromEmacs(){
 	    //search bookmarks to load
 	}
     };
+	
+    function match( haystack, needle ){
+	return (haystack.search( new RegExp( "^" + needle + ".*" ) ) !== -1);
+    }
 
     function clearLinks(){
 	state.links = {};
@@ -191,7 +218,7 @@ function ChromEmacs(){
 		"class": that.CONSTS.links,
 		"id": that.CONSTS.links + "_" + i
 	    });
-	    state.links[that.CONSTS.links + "_" + i] = {"el":el, "txt": el.text()};
+	    state.cur.links[that.CONSTS.links + "_" + i] = {"el":el, "txt": el.text()};
 	    div.css({
 		"left": pos.left-5,
 		"top": pos.top-5
@@ -199,6 +226,16 @@ function ChromEmacs(){
 	    
 	    $("body").prepend( div );
 	});
+    }
+
+    function url( url, tab ){
+	if( tab ){
+	    //window.location.href = url;
+	    window.open( url );
+	} else {
+	    //handle relative page links
+	    that.chromeRequest({"name":state.operation,"url":url});
+	}
     }
     
     function toggleBar( which ){
@@ -238,11 +275,15 @@ ChromEmacs.prototype = {
 	    "keypress": false, //read keypress
 	    "no_def": true,    //prevent default
 	    "no_prop": true,   //stop propagation
+	    "bar": false,      //task bar enabled
 	    "str": "",
 	    "cmd": "",
-	    "links": {},
-	    "operation": "",
-	    "bar": false
+	    "fn": null,
+	    "cur": {
+		"links": {},
+		"discards": {}
+	    },
+	    "operation": ""
 	}
     },
     "cmds": {
