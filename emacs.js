@@ -148,6 +148,7 @@ function ChromEmacs(){
 			openUrl( r[0].el.get(0).href );
 		    }
 		}
+		setBarText( state.str );
 		function openUrl( u ){
 		    if( tab === "this-tab" ){
 			url( u, true );
@@ -189,7 +190,11 @@ function ChromEmacs(){
 	},
 	"execute-command": function(){
 	    //execute one of these commands by hand
-	    //toggleBar( "visible" );
+	    toggleBar( "visible" );
+	    state.fn = function( info ){
+		console.log( info );
+		//finish
+	    };
 	},
 	"escape": function(){
 	    //esc/C-g - to exit out of any of these
@@ -252,8 +257,8 @@ function ChromEmacs(){
 	    });
 	    state.cur.links[that.CONSTS.links + "_" + i] = {"el":el, "txt": el.text()};
 	    div.css({
-		"left": pos.left-5,
-		"top": pos.top-5
+		"left": pos.left-15,
+		"top": pos.top-10
 	    }).text( i );
 	    
 	    $("body").prepend( div );
@@ -271,7 +276,7 @@ function ChromEmacs(){
     function toggleBar( which ){
 	which = which || "";
 	var el = $( "#" + that.CONSTS.bar_id );
-	if( el.length > 0 ){
+	if( el.length > 0 || which === "hidden" ){
 	    if( which === "visible" ){
 		return true;
 	    } else if( which === "hidden" ){
@@ -329,7 +334,7 @@ ChromEmacs.prototype = {
 	"<C>-D": "find-links-this-tab",
 	"<C>-d": "find-links-new-tab",
 	"<C>-b": "back-history",
-	"<C>-f f": "forward-history",
+	"<C>-f": "forward-history",
 	"<C>-p b": "previous-line",
 	"<C>-n": "next-line",
 	"<C>-v": "scroll-down",
