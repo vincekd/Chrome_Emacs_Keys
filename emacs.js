@@ -1,5 +1,4 @@
 function ChromEmacs(){
-    
     //private
     var that = this;
     var state = that.defaultState();
@@ -23,6 +22,14 @@ function ChromEmacs(){
 
     this.evalInput = function( info ){
 	var ret = {"no_prop":false,"no_def":false};
+	if( state.unbind ){
+	    if( info.type === "keydown" && (info.cmd in that.cmds) 
+		&& that.cmds[info.cmd] === "toggle-chromemacs" ){
+		that.cmds[info.cmd]();
+		return state;
+	    }
+	    return ret;
+	}
 	if( ! state[info.type] ){
 	    return ret;
 	}
@@ -146,7 +153,7 @@ function ChromEmacs(){
 			url( u, true );
 		    } else if( tab === "new-tab" ){
 			url( u, false );
-			that.actions['escape']();
+			reset();
 		    }
 		}
 	    };
@@ -186,9 +193,7 @@ function ChromEmacs(){
 	},
 	"escape": function(){
 	    //esc/C-g - to exit out of any of these
-	    state = that.defaultState();
-	    clearLinks();
-	    toggleBar( "hidden" );
+	    reset();
 	},
 	"forward-history": function( count ){
 	    window.history.go( count||1 );
@@ -204,9 +209,19 @@ function ChromEmacs(){
 	},
 	"search-bookmarks": function( action ){
 	    //search bookmarks to load
+	},
+	"toggle-chromemacs": function(){
+	    //turn on/off chromemacs
+	    state.unbind = !state.unbind;
 	}
     };
-	
+
+    function reset(){
+	state = that.defaultState();
+	clearLinks();
+	toggleBar( "hidden" );
+    }
+
     function match( haystack, needle ){
 	return (haystack.search( new RegExp( "^" + needle + ".*" ) ) !== -1);
     }
@@ -294,6 +309,7 @@ ChromEmacs.prototype = {
 	    "str": "",
 	    "cmd": "",
 	    "fn": null,
+	    "unbind":false,
 	    "cur": {
 		"links": {},
 		"discards": {},
@@ -329,7 +345,8 @@ ChromEmacs.prototype = {
 	"<C>-c": "new-tab",
 	"<M>-n": "next-tab",
 	"<M>-b": "previous-tab",
-	"<C>-<M>-b": "bookmark-page"
+	"<C>-<M>-b": "bookmark-page",
+	"<M>-u": "toggle-chromemacs"
     },
     "modifiers": {
 	"Control": "<C>-",
@@ -337,7 +354,8 @@ ChromEmacs.prototype = {
 	"Meta": "<M>-",
 	"Win": "<M>-",
 	"ESC": "<ESC>"
-    }
+    },
+    "exclusions": [ "" ]
 };
 
 var chromEmacs = new ChromEmacs();
