@@ -29,7 +29,8 @@ function ChromEmacs(){
 	
 	if( state.unbind || !state[info.type] ){
 	    if( (info.cmd in that.cmds) && 
-		that.cmds[info.cmd] === "toggle-chromemacs" ){
+		that.cmds[info.cmd] === "toggle-chromemacs" &&
+	      state[info.type] ){
 		that.actions[that.cmds[info.cmd]]();
 		return neg;
 	    } 
@@ -125,7 +126,8 @@ function ChromEmacs(){
 	    toggleBar( "visible" );
 	    $("body").addClass( that.CONSTS.css.search );
 	    state.read_keys = true;
-	    state.fn = searchPage;
+	    //state.fn = searchPage;
+	    state.fn = searchPage2;
 	},
 	"search-regex": function(){
 	    //search page with regex
@@ -163,9 +165,22 @@ function ChromEmacs(){
 	},
 	"toggle-chromemacs": function(){
 	    //turn on/off chromemacs
+	    console.log( state.unbind );
 	    state.unbind = !state.unbind;
+	    console.log( state.unbind );
 	}
     };
+
+    function searchPage2( info ){
+	state.str += info.key;
+	console.log( state.str );
+	var arr = [];
+	$(":contains('" + state.str + "'):not('style,script')").filter(function(){
+	    var el = $(this);
+	    //find just parent element
+	    
+	});
+    }
 
     function searchPage( info ){
 	var o = state.cur.sopts;
@@ -328,8 +343,7 @@ ChromEmacs.prototype = {
 	    "keydown": true,   //read keydown
 	    "keyup": false,    //read keyup
 	    "keypress": false, //read keypress
-	    "no_defaults": true,    //prevent default
-	    "no_prop": false,   //stop propagation
+	    "no_defaults": false,    //prevent default
 	    "bar": false,      //task bar enabled
 	    "read_keys": false,
 	    "str": "",
@@ -356,7 +370,7 @@ ChromEmacs.prototype = {
 	"<C>-d": "find-links-new-tab",
 	"<C>-b": "back-history",
 	"<C>-f": "forward-history",
-	"<C>-p b": "previous-line",
+	"<C>-p": "previous-line",
 	"<C>-n": "next-line",
 	"<C>-v": "scroll-down",
 	"<M>-v": "scroll-up",
@@ -368,7 +382,7 @@ ChromEmacs.prototype = {
 	"<C>-g": "escape",
 	"ESC ESC": "escape",
 	"<C>-x <C>-x": "remove-tab",
-	"<C>-c": "new-tab",
+	"<M>-c": "new-tab",
 	"<M>-n": "next-tab",
 	"<M>-b": "previous-tab",
 	"<C>-<M>-b": "bookmark-page",
