@@ -26,7 +26,7 @@ function ChromEmacs(){
 
 	var pos = {"no_prop":false,"no_def":false},
 	neg = {"no_prop":true,"no_def":true};
-	
+
 	if( state.unbind || !state[info.type] ){
 	    if( (info.cmd in that.cmds) && 
 		that.cmds[info.cmd] === "toggle-chromemacs" &&
@@ -126,8 +126,8 @@ function ChromEmacs(){
 	    toggleBar( "visible" );
 	    $("body").addClass( that.CONSTS.css.search );
 	    state.read_keys = true;
-	    //state.fn = searchPage;
-	    state.fn = searchPage2;
+	    state.fn = searchPage;
+	    //state.fn = searchPage2;
 	},
 	"search-regex": function(){
 	    //search page with regex
@@ -140,7 +140,6 @@ function ChromEmacs(){
 	    //execute one of these commands by hand
 	    toggleBar( "visible" );
 	    state.fn = function( info ){
-		console.log( info );
 		//finish
 	    };
 	},
@@ -173,13 +172,32 @@ function ChromEmacs(){
 
     function searchPage2( info ){
 	state.str += info.key;
-	console.log( state.str );
 	var arr = [];
-	$(":contains('" + state.str + "'):not('style,script')").filter(function(){
-	    var el = $(this);
-	    //find just parent element
-	    
+	$(":visible").filter(":contains('" + state.str + "')").each(function( j, e ){
+	    var el = $(e);
+	    if( el.text().search( new RegExp( state.str ) ) !== -1 ){
+		for( var i = 0; i < arr.length; i++ ){
+		    if( $.contains( arr[i], e ) ){
+			arr.splice( i, 1 );
+		    }
+		}
+		arr.push( e );
+	    }
 	});
+	//cycle through arr, replace str with spans
+	for( var i = 0; i < arr.length; i++ ){
+	    var el = $(arr[i]);
+	    if( el.children().length === 0 ){
+		var html = el.text().replace( new RegExp( "(" + state.str + ")" ), function( str, p1 ){
+		    var str = "";
+		    $.each(p1.split( "" ), function( i, el ){
+			str += "<span class='" + that.CONSTS.search + "'>" + el + "</span>";
+		    });
+		    return str;
+		});
+		el.html( html );
+	    }
+	}
     }
 
     function searchPage( info ){
@@ -334,6 +352,7 @@ ChromEmacs.prototype = {
 	"links": "ChromEmacs_Links",
 	"links_span": "ChromEmacs_Links_Span",
 	"bar_id": "ChromEmacs_Bar",
+	"search": "ChromEmacs_Search",
 	"css": {
 	    "search": "ChromEmacs_Search"
 	}
@@ -380,7 +399,7 @@ ChromEmacs.prototype = {
 	"<M>-<": "scroll-to-top",
 	"<M>-x": "execute-command",
 	"<C>-g": "escape",
-	"ESC ESC": "escape",
+	"<ESC> <ESC>": "escape",
 	"<C>-x <C>-x": "remove-tab",
 	"<M>-c": "new-tab",
 	"<M>-n": "next-tab",

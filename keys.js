@@ -52,7 +52,7 @@ function KeyReader( emacs ){
 
 	if( key.slice( 0, 2 ) !== "U+" ){
 	    return info;
-	} else if( that.correctKeys.hasOwnProperty( key ) ){
+	} else if( key in that.correctKeys ){
 	    key = ev.shiftKey ? that.correctKeys[key][1] : 
 		that.correctKeys[key][0];
 	}

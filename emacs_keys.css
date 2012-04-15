@@ -39,6 +39,10 @@
     background: #F00 !important;
 }
 
-body.ChromEmacs_Search ::selection {
-    background: #9F9;
+span.ChromEmacs_Search {
+    background: #9F9 !important;
 }
+
+/*body.ChromEmacs_Search ::selection {
+    background: #9F9;
+}*/
