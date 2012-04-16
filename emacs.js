@@ -1,3 +1,7 @@
+//TODO: options page: save changes to commands, css changes, defaults
+//TODO: help options
+//TODO: finish searching page without window.find()
+
 function ChromEmacs(){
     //private
     var that = this;
@@ -223,6 +227,8 @@ function ChromEmacs(){
 		    if( match( key, link ) || match( val.txt, state.str ) ){
 			state.cur.links[key] = state.cur.discards[key];
 			$("#" + key ).show();
+			$("." + that.CONSTS.links_span + state.str.length ).
+			    removeClass( that.CONSTS.links_span );
 			delete state.cur.discards[key];
 		    }
 		});
@@ -241,9 +247,14 @@ function ChromEmacs(){
 			$("#" + key ).hide();
 			delete state.cur.links[key];
 		    } else {
+			for( var i = 0; i < state.str.length; i++ ){
+			    $("#" + key ).find("." + that.CONSTS.links_span + i )
+				.addClass( that.CONSTS.links_span );
+			}
 			r.push( val );
 		    }
 		});
+
 		if( r.length === 1 ){
 		    //openUrl( r[0].el.attr( "href" ) );
 		    openUrl( r[0].el.get(0).href );
@@ -306,8 +317,8 @@ function ChromEmacs(){
 		"top": pos.top
 	    });
 	    var str = "";
-	    $.each(i.toString().split( "" ), function( i, el ){
-		str += "<span class='" + that.CONSTS.links_span + "'>" + el + "</span>";
+	    $.each(i.toString().split( "" ), function( j, e ){
+		str += "<span class='" + that.CONSTS.links_span + j + "'>" + e + "</span>";
 	    });
 	    div.html( str );
 	    $("body").prepend( div );
