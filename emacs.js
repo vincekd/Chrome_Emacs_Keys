@@ -5,16 +5,15 @@
 function ChromEmacs(){
     //private
     var that = this;
+    var userSettings = new Settings( that );
     var state = that.defaultState();
     var keyreader = new KeyReader( that );
-
-    
 
     function evalState(){
 	var str = state.cmd;
 	for( var cmd in that.cmds ){
 	    if( that.cmds.hasOwnProperty( cmd ) ){
-		if( escape( cmd ).search( new RegExp( "^" + escape( str ) ) ) !== -1 ){
+		if( match( escape( cmd ), escape( str ) ) ){
 		    if( cmd === str ){
 			return that.cmds[cmd];
 		    }
@@ -178,9 +177,7 @@ function ChromEmacs(){
 	},
 	"toggle-chromemacs": function(){
 	    //turn on/off chromemacs
-	    console.log( state.unbind );
 	    state.unbind = !state.unbind;
-	    console.log( state.unbind );
 	}
     };
 
@@ -252,13 +249,14 @@ function ChromEmacs(){
 		link = that.CONSTS.links + "_" + state.str;
 		r = [];
 		$.each( state.cur.links, function( key, val ){
-		    if( !match( key, link ) && !match( val.txt, state.str ) ){
+		    var m = match( key, link );
+		    if( !m && !match( val.txt, state.str ) ){
 			state.cur.discards[key] = state.cur.links[key];
 			$("#" + key ).hide();
 			delete state.cur.links[key];
 		    } else {
-			for( var i = 0; i < state.str.length; i++ ){
-			    $("#" + key ).find("." + that.CONSTS.links_span + i )
+			if( m ){
+			    $("#" + key ).find("." + that.CONSTS.links_span + (state.str.length-1) )
 				.addClass( that.CONSTS.links_span );
 			}
 			r.push( val );
@@ -369,74 +367,6 @@ function ChromEmacs(){
 }
 
 ChromEmacs.prototype = {
-    "CONSTS": {
-	"links": "ChromEmacs_Links",
-	"links_span": "ChromEmacs_Links_Span",
-	"bar_id": "ChromEmacs_Bar",
-	"search": "ChromEmacs_Search",
-	"css": {
-	    "search": "ChromEmacs_Search"
-	}
-    },
-    "defaultState": function(){
-	return {
-	    "keydown": true,   //read keydown
-	    "keyup": 0,    //read keyup
-	    "keypress": 0, //read keypress
-	    "no_defaults": false,    //prevent default
-	    "bar": false,      //task bar enabled
-	    "read_keys": false,
-	    "str": "",
-	    "cmd": "",
-	    "fn": null,
-	    "unbind":false,
-	    "cur": {
-		"links": {},
-		"discards": {},
-		"sopts": {
-		    "cs": false,
-		    "back": false,
-		    "wrap": true,
-		    "whole": false,
-		    "frames": true,
-		    "dialog": false
-		}
-	    },
-	    "operation": ""
-	}
-    },
-    "cmds": {
-	"<C>-D": "find-links-this-tab",
-	"<C>-d": "find-links-new-tab",
-	"<C>-b": "back-history",
-	"<C>-f": "forward-history",
-	"<C>-p": "previous-line",
-	"<C>-n": "next-line",
-	"<C>-v": "scroll-down",
-	"<M>-v": "scroll-up",
-	"<C>-s": "search-page",
-	"<M>-s": "search-regex",
-	"<M>->": "scroll-to-bottom",
-	"<M>-<": "scroll-to-top",
-	"<M>-x": "execute-command",
-	"<C>-g": "escape",
-	"<ESC> <ESC>": "escape",
-	"<C>-x <C>-x": "remove-tab",
-	"<M>-c": "new-tab",
-	"<M>-n": "next-tab",
-	"<M>-b": "previous-tab",
-	"<C>-<M>-b": "bookmark-page",
-	"<M>-u": "toggle-chromemacs",
-	"<M>-q": "no-defaults"
-    },
-    "modifiers": {
-	"Control": "<C>-",
-	"Alt": "<M>-",
-	"Meta": "<M>-",
-	"Win": "<M>-",
-	"ESC": "<ESC>"
-    },
-    "exclusions": [ "" ],
     "objToArr": function( obj ){
 	var arr = [],i;
 	for( i in obj ){
