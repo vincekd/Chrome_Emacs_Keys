@@ -3,7 +3,7 @@ function KeyReader( emacs ){
     var that = this;
     document.addEventListener( "keydown", keyread, true );
     document.addEventListener( "keyup", keyread, true );
-    //document.addEventListener( "keypress", keyread, true );
+    document.addEventListener( "keypress", keyread, true );
 
     function keyread( ev ){
 	stopEvent( ev, emacs.evalInput( getKeyInfo( ev ) ) );

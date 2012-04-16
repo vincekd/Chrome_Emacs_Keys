@@ -31,6 +31,11 @@ function ChromEmacs(){
 	var pos = {"no_prop":false,"no_def":false},
 	neg = {"no_prop":true,"no_def":true};
 
+	if( state[info.type] !== true && state[info.type] > 0 ){
+	    state[info.type]--;
+	    return neg;
+	}
+
 	if( state.unbind || !state[info.type] ){
 	    if( (info.cmd in that.cmds) && 
 		that.cmds[info.cmd] === "toggle-chromemacs" &&
@@ -56,9 +61,14 @@ function ChromEmacs(){
 	state.cmd = $.trim( state.cmd + " " + info.cmd );
 	var action = evalState();
 	if( action === false ){
+	    //that.reset();
 	    state.cmd = "";
 	    return pos;
 	} else if( action !== true ){
+	    state.keypress++;
+	    state.keyup++;
+	    //reset completely?
+	    //reset();
 	    state.cmd = "";
 	    executeAction( action );
 	}
@@ -371,8 +381,8 @@ ChromEmacs.prototype = {
     "defaultState": function(){
 	return {
 	    "keydown": true,   //read keydown
-	    "keyup": false,    //read keyup
-	    "keypress": false, //read keypress
+	    "keyup": 0,    //read keyup
+	    "keypress": 0, //read keypress
 	    "no_defaults": false,    //prevent default
 	    "bar": false,      //task bar enabled
 	    "read_keys": false,
