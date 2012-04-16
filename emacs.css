@@ -3,8 +3,9 @@
     padding:0px 0px 0px 0px;
     /*background:#4A8;*/
     background:#5C59AB;
-    color: #CCC;
+    color: #DDD;
     /*text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+    color: #CCC;
     color:#000;*/
     position:absolute;
     min-width:16px;
@@ -18,7 +19,8 @@
 }
 
 .ChromEmacs_Links_Span {
-    color:#302505;
+    color: #999;
+    /*color:#302505;*/
 }
 
 #ChromEmacs_Bar {

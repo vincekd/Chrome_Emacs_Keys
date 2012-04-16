@@ -4,7 +4,7 @@
     },
     "content_scripts": [ {
 	"all_frames": true,
-	"css": [ "emacs_keys.css" ],
+	"css": [ "emacs.css" ],
 	"js": [ "jquery-min.js", "keys.js", "settings.js", "emacs.js" ],
 	"matches": [ "\u003Call_urls\u003E" ],
 	"run_at": "document_start"
