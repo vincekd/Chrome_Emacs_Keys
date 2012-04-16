@@ -1,2 +1,41 @@
 <html>
+<head>
+<title>ChromEmacs Options</title>
+<style>
+
+</style>
+</head>
+<body>
+<h1>ChromEmacs Options</h1>
+<div id="wrapper">
+
+<div id="defaults">
+<label for="chrome_defaults">Turn off all chrome defaults</label>
+<input id="chrome_defaults" type="checkbox"/>
+<label for="active_start_up">Active on page load</label>
+<input id="active_start_up"/>
+</div>
+
+<div id="keybindings">
+</div>
+
+<div id="emacs_css">
+</div>
+
+<div id="excluded_domains">
+</div>
+
+</div>
+</body>
+<script type="text/javascript" src="jquery-min.js"></script>
+<script type="text/javascript" src="keys.js"></script>
+<script type="text/javascript" src="emacs.js"></script>
+<script type="text/javascript">
+var em = new ChromEmacs();
+var cmds = {};
+var actions = {};
+$.extend( cmds, em.cmds );
+$.extend( actions, em.actions );
+em.evalInput = function( info ){ console.log( info ); return {'no_def':false,'no_prop':false};};
+</script>
 </html>

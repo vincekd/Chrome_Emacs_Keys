@@ -102,7 +102,7 @@ function ChromEmacs(){
 	    window.scrollBy( 15, 0 );
 	},
 	"previous-line": function(){
-	    window.scrollBy( 0, -15 );x
+	    window.scrollBy( 0, -15 );
 	},
 	"next-line": function(){
 	    window.scrollBy( 0, 15 );	
