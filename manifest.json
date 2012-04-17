@@ -10,13 +10,13 @@
 	"run_at": "document_start"
     } ],
     "description": "emacs key bindings for chromium",
-    /*"icons": {
-      "128": "icons/icon128.png",
-      "16": "icons/icon16.png",
-      "48": "icons/icon48.png"
-      },*/
+    "icons": {
+	"128": "img/icon128.png"
+    },
     "name": "emacs keys",
     "options_page": "options.html",
-    "permissions": [ "tabs", "bookmarks", "clipboardRead", "\u003Call_urls\u003E", "chrome://newtab" ],
+    "permissions": [ "tabs", "bookmarks", "clipboardRead", "\u003Call_urls\u003E" ],
     "version": "1.1"
 }
+/*"16": "icons/icon16.png",
+"48": "icons/icon48.png"*/
