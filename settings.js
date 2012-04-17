@@ -4,7 +4,7 @@ function Settings(){
     var emacs = null;
     var defaults = {
 	"cmds": {
-	    "<C>-D": "find-links-this-tab",
+	    "<C>-x <C>-f": "find-links-this-tab",
 	    "<C>-d": "find-links-new-tab",
 	    "<C>-b": "back-history",
 	    "<C>-f": "forward-history",
@@ -19,7 +19,7 @@ function Settings(){
 	    "<M>-x": "execute-command",
 	    "<C>-g": "escape",
 	    "<ESC> <ESC>": "escape",
-	    "<C>-x <C>-x": "remove-tab",
+	    "<C>-x <C>-c": "remove-tab",
 	    "<M>-c": "new-tab",
 	    "<M>-n": "next-tab",
 	    "<M>-b": "previous-tab",
@@ -118,6 +118,7 @@ function Settings(){
 
     this.clearUserData = function(){
 	localStorage.clear();
+	this.init();
     };
     
     this.addExclusion = function( str ){
@@ -140,7 +141,8 @@ function Settings(){
     };
 
     function save(){
-	localStorage['user_values'] = JSON.stringify( uv );
+	//re-enable this
+	//localStorage['user_values'] = JSON.stringify( uv );
     }
     
     this.init = function(){

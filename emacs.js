@@ -1,6 +1,7 @@
 //TODO: options page: save changes to commands, css changes, defaults
 //TODO: help page
 //TODO: finish searching page without window.find()
+//TODO: put command on bottom of screen
 function ChromEmacs(){
     "use strict";
 

@@ -8,6 +8,15 @@ function getSettings(){
     });
 }
 
+function clearUserData(){
+    var obj = {
+	"name": "clearUserData"
+    };
+    chrome.extension.sendRequest( obj, function( resp ){
+	console.log( resp ); 
+    });
+}
+
 function addUserCmd( cmd, action ){
     var obj = {
 	"name": "addUserCmd",
