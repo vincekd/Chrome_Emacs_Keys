@@ -1,0 +1,19 @@
+#wrapper {
+    width:800px;
+    margin:auto;
+    text-align:center;
+}
+
+#cmd_cont {
+    border:1px solid #000;
+    text-align:center;
+    margin:auto;
+}
+
+.Confirm_Cmd {
+    /*visibility:hidden;*/
+}
+
+h3 {
+    border: 1px solid #000;
+}

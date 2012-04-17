@@ -1,6 +1,7 @@
-function Settings( emacs ){
+function Settings(){
     "use strict";
     var uv;
+    var emacs = null;
     var defaults = {
 	"cmds": {
 	    "<C>-D": "find-links-this-tab",
@@ -33,9 +34,6 @@ function Settings( emacs ){
 	    "Win": "<M>-",
 	    "ESC": "<ESC>"
 	},
-	"defaultState": function(){
-	    return $.extend(true, {}, defaultState);
-	},
 	"CONSTS": {
 	    "links": "ChromEmacs_Links",
 	    "links_span": "ChromEmacs_Links_Span",
@@ -45,15 +43,13 @@ function Settings( emacs ){
 		"search": "ChromEmacs_Search"
 	    }
 	},
-	"exclusions":[]
-    },
-    defaultState = (function(){
-	var def = {
-	    "keydown": true,   //read keydown
-	    "keyup": 0,    //read keyup
-	    "keypress": 0, //read keypress
-	    "no_defaults": false,    //prevent default
-	    "bar": false,      //task bar enabled
+	"exclusions": [],
+	"no_defaults": false,
+	"default_state": {
+	    "keydown": true,   
+	    "keyup": 0,    
+	    "keypress": 0, 
+	    "bar": false,      
 	    "read_keys": false,
 	    "str": "",
 	    "cmd": "",
@@ -71,10 +67,43 @@ function Settings( emacs ){
 		    "dialog": false
 		}
 	    },
-	    "operation": "",
-	};
-	return def;
-    }());
+	    "operation": ""
+	}
+    };
+
+    var actions = {
+	"no-defaults": "Toggle no defaults on/off",
+	"scroll-to-bottom": "Scroll to bottom of page",
+	"scroll-to-top": "Scroll to top of page",
+	"scroll-to-far-right": "Scroll to far right",
+	"scroll-to-far-left": "Scroll to far left",
+	"scroll-left": "Scroll left by 15px",
+	"scroll-right": "Scroll right by 15px",
+	"previous-line": "Scroll up by 15px",
+	"next-line": "Scroll down by 15px",
+	"scroll-down": "Scroll down by page length",
+	"scroll-up": "Scroll up by page length",
+	"find-links-this-tab": "Find links and open them on this tab",
+	"find-links-new-tab": "Find links and open them in a new tab",
+	"search-page": "Search page for a string",
+	"search-regex": "Search page for regex",
+	"execute-command": "Toggle input bar and type in command",
+	"escape": "Quit current operation",
+	"forward-history": "Go forward in your history",
+	"back-history": "Go back in your history",
+	"refresh-tab": "Reload current page",
+	"search-bookmarks": "Search bookmarks and open page",
+	"toggle-chromemacs": "Toggle chromemacs on/off for current page",
+	"remove-tab": "Quit current tab",
+	"new-tab": "Open a new tab",
+	"go-to-tab": "Go to tab in current window by index number",
+	"next-tab": "Go to next tab index or wrap around",
+	"previous-tab": "Go to previous tab index or wrap around"
+    };
+
+    this.getActions = function(){
+	return actions;
+    };
 
     this.addUserCmd = function( key, action ){
 	//localStorage['cmds'][key] = action;
@@ -84,36 +113,44 @@ function Settings( emacs ){
 
     this.removeUserCmd = function( key ){
 	delete uv['cmds'][key];
+	save();
     };
 
     this.clearUserData = function(){
 	localStorage.clear();
     };
+    
+    this.addExclusion = function( str ){
+	uv.exclusions.push( str );
+	save();
+    };
+
+    this.removeExclusion = function( str ){
+	uv.exclusions.splice( uv.indexOf( str ), 1 );
+	save();
+    };
+
+    this.setNoDefaults = function( bool ){
+	uv.no_defaults = (bool == true) ? true : false;
+	save();
+    };
+
+    this.returnUserValues = function(){
+	return uv;
+    };
 
     function save(){
 	localStorage['user_values'] = JSON.stringify( uv );
     }
-
-    this.show = function(){
-	console.log( uv );
-    };
     
     this.init = function(){
-
 	if( 'user_values' in localStorage ){
 	    uv = JSON.parse( localStorage.user_values );
 	} else {
 	    uv = $.extend( true, {}, defaults );
 	    save();
 	}
-
-	for( var d in uv ){
-	    if( uv.hasOwnProperty( d ) ){
-		if( emacs ){
-		    emacs[d] = uv[d];
-		}
-	    }
-	}
     };
+
     this.init();
 }

@@ -1,11 +1,11 @@
 {
     "background": {
-	"scripts": ["background.js"]
+	"scripts": [ "jquery-min.js", "settings.js", "background.js" ]
     },
     "content_scripts": [ {
 	"all_frames": true,
 	"css": [ "emacs.css" ],
-	"js": [ "jquery-min.js", "keys.js", "settings.js", "emacs.js" ],
+	"js": [ "jquery-min.js", "keys.js", "emacs.js" ],
 	"matches": [ "\u003Call_urls\u003E" ],
 	"run_at": "document_start"
     } ],

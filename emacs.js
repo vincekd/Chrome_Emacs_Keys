@@ -1,14 +1,12 @@
 //TODO: options page: save changes to commands, css changes, defaults
-//TODO: help options
+//TODO: help page
 //TODO: finish searching page without window.find()
 function ChromEmacs(){
     "use strict";
-    //private
-    var that = this;
-    var userSettings = new Settings( that );
-    var state = that.defaultState();
-    var keyreader = new KeyReader( that );
 
+    var that = this;
+    var state, keyreader;
+ 
     function evalState(){
 	var str = state.cmd;
 	for( var cmd in that.cmds ){
@@ -55,18 +53,18 @@ function ChromEmacs(){
 	    return pos;	    
 	}
 
-	pos.no_def = (state.no_defaults) ? true : false;
+	pos.no_def = (that.no_defaults) ? true : false;
 
 	state.cmd = $.trim( state.cmd + " " + info.cmd );
 	var action = evalState();
 	if( action === false ){
-	    //that.reset();
+	    //reset completely?
+	    //reset();
 	    state.cmd = "";
 	    return pos;
 	} else if( action !== true ){
 	    state.keypress++;
 	    state.keyup++;
-	    //reset completely?
 	    //reset();
 	    state.cmd = "";
 	    executeAction( action );
@@ -90,7 +88,7 @@ function ChromEmacs(){
 
     this.actions = {
 	"no-defaults": function(){
-	    state.no_defaults = !state.no_defaults;
+	    that.no_defaults = !that.no_defaults;
 	},
 	"scroll-to-bottom": function(){
 	    window.scrollTo( window.scrollX, document.body.scrollHeight );
@@ -169,12 +167,6 @@ function ChromEmacs(){
 	"refresh-tab": function(){
 	    window.location.reload();
 	},
-	"go-to-tab": function( action, num ){
-	    //need index number
-	},
-	"search-bookmarks": function( action ){
-	    //search bookmarks to load
-	},
 	"toggle-chromemacs": function(){
 	    //turn on/off chromemacs
 	    state.unbind = !state.unbind;
@@ -241,7 +233,6 @@ function ChromEmacs(){
 		});
 	    } else if( info.enter ){
 		if( link in state.cur.links ){
-		    //openUrl( state.cur.links[link].el.attr( "href" ) );
 		    openUrl( state.cur.links[link].el.get(0).href );
 		}
 	    } else if( info.key.length === 1 ){
@@ -264,7 +255,6 @@ function ChromEmacs(){
 		});
 
 		if( r.length === 1 ){
-		    //openUrl( r[0].el.attr( "href" ) );
 		    openUrl( r[0].el.get(0).href );
 		}
 	    }
@@ -281,7 +271,7 @@ function ChromEmacs(){
     }
 
     function reset(){
-	state = that.defaultState();
+	state = defaultState();
 	$("*").removeClass( objToArr( that.CONSTS.css ).join( " " ) );
 	clearLinks();
 	toggleBar( "hidden" );
@@ -298,7 +288,6 @@ function ChromEmacs(){
     }
 
     function findLinks(){
-	//clearLinks();
 	var y = window.scrollY, sc = $(window).height();
 	$("a[href]:visible").filter(function(){
 	    var el = $(this), pos = el.offset();
@@ -364,8 +353,29 @@ function ChromEmacs(){
     function setBarText( str ){
 	$("#" + that.CONSTS.bar_id ).val( str );
     }
+
+    function defaultState(){
+	return $.extend( true, {}, that.default_state );
+    }
+
+    function getDefaults(){
+	that.chromeRequest( {"name":"getSettings"}, function( resp ){
+	    var us = resp.settings;
+	    for( var d in us ){
+		if( us.hasOwnProperty( d ) ){
+		    that[d] = us[d];
+		}
+	    }
+	    state = defaultState();
+	    keyreader = new KeyReader( that );
+	});
+    }
+
+    getDefaults();
 }
 
+
+//utility
 function objToArr( obj ){
     var arr = [],i;
     for( i in obj ){

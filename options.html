@@ -1,33 +1,39 @@
 <html>
 <head>
 <title>ChromEmacs Options</title>
-<style>
-
-</style>
+<link rel="stylesheet" type="text/css" href="options.css"/>
 </head>
 <body>
-<h1>ChromEmacs Options</h1>
 <div id="wrapper">
+<h1>ChromEmacs Options</h1>
 
 <div id="defaults">
+<h3>Chrome Defaults Disabled</h3>
 <label for="chrome_defaults">Turn off all chrome defaults</label>
 <input id="chrome_defaults" type="checkbox"/>
-<label for="active_start_up">Active on page load</label>
-<input id="active_start_up"/>
 </div>
 
 <div id="keybindings">
+<h3>Key Bindings to Commands</h3>
+<table id="cmd_cont">
+<thead>
+<tr><th>Keys</th><th>Command</th></tr>
+</thead>
+<tbody id="cmds">
+</tbody>
+</table>
 </div>
 
 <div id="emacs_css">
+<h3>Userstyles</h3>
 </div>
 
 <div id="excluded_domains">
+<h3>Excluded Domains</h3>
 </div>
 
 </div>
 </body>
 <script type="text/javascript" src="jquery-min.js"></script>
-<script type="text/javascript" src="settings.js"></script>
 <script type="text/javascript" src="options.js"></script>
 </html>

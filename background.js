@@ -72,10 +72,43 @@ var util = {
     }
 };
 
+var options = {
+    "getSettings": function( tab, send, req ){
+	var uv = settings.returnUserValues();
+	send( {"settings":uv} );
+    },
+    "addUserCmd": function( tab, send, req ){
+	settings.addUserCmd( req.cmd, req.action );
+    },
+    "removeUserCmd": function( tab, send, req){
+	settings.removeUserCmd( req.cmd );
+    },
+    "addExclusion": function( tab, send, req ){
+	settings.addExclusion( req.ex );
+    },
+    "removeExclusion": function( tab, send, req ){
+	settings.removeExclusion( req.ex );
+    },
+    "setNoDefaults": function( tab, send, req ){
+	settings.setNoDefaults( req.no_def );
+    },
+    "clearUserData": function( tab, send, req ){
+	settings.clearUserData();
+    },
+    "getActions": function( tab, send, req ){
+	var acts = settings.getActions();
+	send( {"actions": acts} );
+    }
+}
+
+var settings = new Settings();
+
 chrome.extension.onRequest.addListener(
     function( request, sender, send ){
 	if( util.hasOwnProperty( request.name ) ){
 	    util[request.name]( sender.tab, send, request );
+	} else if( options.hasOwnProperty( request.name ) ){
+	    options[request.name]( sender.tab, send, request );
 	} else {
 	    send( {"success": false} );
 	}
