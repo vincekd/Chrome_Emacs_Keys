@@ -1,4 +1,6 @@
 function Settings( emacs ){
+    "use strict";
+    var uv;
     var defaults = {
 	"cmds": {
 	    "<C>-D": "find-links-this-tab",
@@ -32,7 +34,7 @@ function Settings( emacs ){
 	    "ESC": "<ESC>"
 	},
 	"defaultState": function(){
-	    return $.extend({}, defaultState);
+	    return $.extend(true, {}, defaultState);
 	},
 	"CONSTS": {
 	    "links": "ChromEmacs_Links",
@@ -72,26 +74,44 @@ function Settings( emacs ){
 	    "operation": "",
 	};
 	return def;
-    }()),
-    user_values = {
-	
+    }());
+
+    this.addUserCmd = function( key, action ){
+	//localStorage['cmds'][key] = action;
+	uv['cmds'][key] = action;
+	save();
     };
 
-    function getUserValues(){
-	for( var i in defaults ){
-	    if( i in localStorage ){
-		user_values[i] = localStorage[i];
-	    } else {
-		user_values[i] = defaults[i];
-	    }
-	}
+    this.removeUserCmd = function( key ){
+	delete uv['cmds'][key];
+    };
+
+    this.clearUserData = function(){
+	localStorage.clear();
+    };
+
+    function save(){
+	localStorage['user_values'] = JSON.stringify( uv );
     }
 
+    this.show = function(){
+	console.log( uv );
+    };
+    
     this.init = function(){
-	getUserValues();
-	for( var i in user_values ){
-	    if( user_values.hasOwnProperty( i ) ){
-		emacs[i] = user_values[i];
+
+	if( 'user_values' in localStorage ){
+	    uv = JSON.parse( localStorage.user_values );
+	} else {
+	    uv = $.extend( true, {}, defaults );
+	    save();
+	}
+
+	for( var d in uv ){
+	    if( uv.hasOwnProperty( d ) ){
+		if( emacs ){
+		    emacs[d] = uv[d];
+		}
 	    }
 	}
     };

@@ -1,0 +1,2 @@
+var settings = new Settings();
+

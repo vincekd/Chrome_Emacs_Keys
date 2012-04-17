@@ -1,8 +1,8 @@
 //TODO: options page: save changes to commands, css changes, defaults
 //TODO: help options
 //TODO: finish searching page without window.find()
-
 function ChromEmacs(){
+    "use strict";
     //private
     var that = this;
     var userSettings = new Settings( that );
@@ -282,7 +282,7 @@ function ChromEmacs(){
 
     function reset(){
 	state = that.defaultState();
-	$("*").removeClass( that.objToArr( that.CONSTS.css ).join( " " ) );
+	$("*").removeClass( objToArr( that.CONSTS.css ).join( " " ) );
 	clearLinks();
 	toggleBar( "hidden" );
 	$(document).focus();
@@ -366,14 +366,12 @@ function ChromEmacs(){
     }
 }
 
-ChromEmacs.prototype = {
-    "objToArr": function( obj ){
-	var arr = [],i;
-	for( i in obj ){
-	    arr.push( obj[i] );
-	}
-	return arr;
+function objToArr( obj ){
+    var arr = [],i;
+    for( i in obj ){
+	arr.push( obj[i] );
     }
-};
+    return arr;
+}
 
 var chromEmacs = new ChromEmacs();
