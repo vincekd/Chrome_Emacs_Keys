@@ -106,7 +106,7 @@ function Settings(){
     };
 
     this.addUserCmd = function( key, action ){
-	//localStorage['cmds'][key] = action;
+	//validate
 	uv['cmds'][key] = action;
 	save();
     };
