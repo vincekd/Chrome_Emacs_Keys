@@ -1,0 +1,14 @@
+ChromEmacs
+
+
+Emacs keybindings extension for Chromium.
+
+The keybindings can be set from the options page.
+
+By default, help page is <C>-h
+
+<C> = Control
+<M> = Alt, Super, or Windows keys
+<ESC> = Escape //currently nonfunctional
+
+

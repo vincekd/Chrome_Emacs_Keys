@@ -2,6 +2,8 @@
 //TODO: help page
 //TODO: finish searching page without window.find()
 //TODO: put command on bottom of screen
+//TODO: focus/unfocus text fields
+//TODO: disable all inputs on pageload- google
 function ChromEmacs(){
     "use strict";
 
@@ -171,8 +173,56 @@ function ChromEmacs(){
 	"toggle-chromemacs": function(){
 	    //turn on/off chromemacs
 	    state.unbind = !state.unbind;
+	},
+	"display-help": function(){
+	    var el = helpTable();
+	    // var div = $("<div />", {
+	    // 	"id": that.CONSTS.help
+	    // });
+	    // div.append( el );
+	    var div = '<div id="' + that.CONSTS.help + '"><div></div></div>';
+	    $("body").append( div );
+	    $("#" + that.CONSTS.help ).find( "div" ).append( el ).
+		bind( "click", function( ev ){
+		    reset();
+	    });
+	    $("html").addClass( that.CONSTS.css.help );
 	}
     };
+
+    function helpTable(){
+	var table = $("<table />"),tbody = $("<tbody />"),tr = $("<tr />"),
+	td = $("<th />");
+	
+	td.text( "Keys" );
+	tr.append( td );
+	td = $("<th />");
+	td.text( "Action" );
+	tr.append( td );
+	td = $("<th />");
+	td.text( "Description" );
+	tr.append( td );
+	tbody.append( tr );
+
+	for( var i in that.cmds ){
+	    if( that.cmds.hasOwnProperty( i ) && 
+		(that.cmds[i] in that._actions_) ){
+		tr = $("<tr />");
+		td = $("<td />");
+		td.text( i );
+		tr.append( td );
+		td = $("<td />");
+		td.text( that.cmds[i] );
+		tr.append( td );
+		td = $("<td />");
+		td.text( that._actions_[that.cmds[i]] );
+		tr.append( td );
+		tbody.append( tr );
+	    }
+	}
+	table.append( tbody );
+	return table;
+    }
 
     function searchPage2( info ){
 	state.str += info.key;
@@ -274,6 +324,7 @@ function ChromEmacs(){
     function reset(){
 	state = defaultState();
 	$("*").removeClass( objToArr( that.CONSTS.css ).join( " " ) );
+	$("#" + that.CONSTS.help ).remove();
 	clearLinks();
 	toggleBar( "hidden" );
 	$(document).focus();
@@ -369,6 +420,9 @@ function ChromEmacs(){
 	    }
 	    state = defaultState();
 	    keyreader = new KeyReader( that );
+	    if( 'css' in that ){
+		$("head").append( "<style>" + that.css + "</style>" );
+	    }
 	});
     }
 

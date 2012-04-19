@@ -83,6 +83,9 @@ var options = {
     "removeUserCmd": function( tab, send, req){
 	settings.removeUserCmd( req.cmd );
     },
+    "updateUserCmd": function( tab, send, req ){
+	settings.updateUserCmd( req.cmd, req.action, req.old );
+    },
     "addExclusion": function( tab, send, req ){
 	settings.addExclusion( req.ex );
     },
@@ -94,10 +97,11 @@ var options = {
     },
     "clearUserData": function( tab, send, req ){
 	settings.clearUserData();
+	send({"success":"true"});
     },
-    "getActions": function( tab, send, req ){
-	var acts = settings.getActions();
-	send( {"actions": acts} );
+    "setUserCSS": function( tab, send, req ){
+	settings.setUserCSS( req.css );
+	send( {"success":"true"} );
     }
 }
 

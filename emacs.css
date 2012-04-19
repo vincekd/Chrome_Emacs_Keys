@@ -50,6 +50,36 @@ span.ChromEmacs_Search {
     background: #9F9 !important;
 }
 
+#ChromEmacs_Help {
+    position:fixed;
+    left:0px;
+    top:0px;
+    width:100%;
+    height:100%;
+    background: rgba( 0, 0, 0, .7 );
+    z-index:999999999;
+    overflow-y:scroll;
+}
+
+#ChromEmacs_Help div {
+    height:100%;
+}
+
+#ChromEmacs_Help table {
+    background:#FFF;
+    margin:auto;
+    padding:0px;
+    height:100%;
+    -webkit-user-select: text;
+    user-select: text;
+}
+
+.ChromEmacs_Help_Html {
+    overflow: hidden;
+    -webkit-user-select: none;
+    user-select: none;
+}
+
 /*body.ChromEmacs_Search ::selection {
     background: #9F9;
 }*/

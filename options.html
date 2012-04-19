@@ -10,30 +10,41 @@
 <div id="accordion">
 
 <div id="defaults">
-<h3>Chrome Defaults Disabled</h3>
+<h3>General Options</h3>
 <div>
 <label for="chrome_defaults">Turn off all chrome defaults</label>
-<input id="chrome_defaults" type="checkbox"/>
+<input id="chrome_defaults" type="checkbox"/><br>
+<label for="clearUserData">Reset Defaults (Clears User Data)</label>
+<button type="button" id="clearUserData">Clear</button>
 </div>
 </div>
 
 <div id="keybindings">
 <h3>Key Bindings to Commands</h3>
 <div>
+In order to delete a command, click Edit, empty the keys column input, and click save.
 <table id="cmd_cont">
 <thead>
-<tr><th>Keys</th><th>Command</th></tr>
+<tr><th>Keys</th><th>Action</th><th>Save/Edit</th></tr>
 </thead>
 <tbody id="cmds">
 </tbody>
+<tfoot>
+<tr>
+<td colspan="3">
+<button type="button" id="add_new_cmd">Add New Keybinding</button>
+</td>
+</tr>
+</tfoot>
 </table>
 </div>
 </div>
 
-<div id="emacs_css">
+<div>
 <h3>Userstyles</h3>
 <div>
-<textarea></textarea>
+<textarea id="emacs_css" cols="30" rows="10"></textarea><br>
+<button id="save_user_css">Save CSS</button>
 </div>
 </div>
 
