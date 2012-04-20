@@ -11,9 +11,9 @@
     } ],
     "description": "emacs key bindings for chromium",
     "icons": {
-	"128": "img/icon128-chromemacs.png",
-	"16": "img/icon16-chromemacs.png",
-	"48": "img/icon48-chromemacs.png"
+	"128": "icons/icon128-chromemacs.png",
+	"16": "icons/icon16-chromemacs.png",
+	"48": "icons/icon48-chromemacs.png"
     },
     "name": "ChromEmacs",
     "options_page": "options.html",
