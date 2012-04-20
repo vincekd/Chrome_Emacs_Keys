@@ -226,16 +226,16 @@ function ChromEmacs(){
 		help.fadeOut( 'fast', function(){
 		    help.remove();
 		});
-		return;
-	    }
-	    var div = '<div id="' + that.CONSTS.help + '" style="display:none;"><div></div></div>';
-	    $("body").append( div );
-	    var help = $("#" + that.CONSTS.help );
-	    help.find( "div" ).append( el ).bind( "click", function( ev ){
+	    } else {
+		var div = '<div id="' + that.CONSTS.help + '" style="display:none;"><div></div></div>';
+		$("body").append( div );
+		var help = $("#" + that.CONSTS.help );
+		help.find( "div" ).append( el ).bind( "click", function( ev ){
 		    reset();
-	    });
-	    $("html").addClass( that.CONSTS.css.help );
-	    help.fadeIn( 'fast' );
+		});
+		$("html").addClass( that.CONSTS.css.help );
+		help.fadeIn( 'fast' );
+	    }
 	    return {"bar":true};
 	}
     };
