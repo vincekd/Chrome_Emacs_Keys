@@ -1,3 +1,4 @@
+"use strict";
 var util = {
     "remove-tab": function( tab, send ){
 	chrome.tabs.remove( tab.id );
@@ -107,13 +108,12 @@ var options = {
 
 var settings = new Settings();
 
-chrome.extension.onRequest.addListener(
-    function( request, sender, send ){
-	if( util.hasOwnProperty( request.name ) ){
-	    util[request.name]( sender.tab, send, request );
-	} else if( options.hasOwnProperty( request.name ) ){
-	    options[request.name]( sender.tab, send, request );
-	} else {
-	    send( {"success": false} );
-	}
-    });
+chrome.extension.onRequest.addListener(function( request, sender, send ){
+    if( util.hasOwnProperty( request.name ) ){
+	util[request.name]( sender.tab, send, request );
+    } else if( options.hasOwnProperty( request.name ) ){
+	options[request.name]( sender.tab, send, request );
+    } else {
+	send( {"success": false} );
+    }
+});

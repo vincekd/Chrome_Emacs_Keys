@@ -4,8 +4,8 @@ function Settings(){
     var emacs = null;
     var defaults = {
 	"cmds": {
-	    "<C>-x <C>-f": "find-links-this-tab",
-	    "<C>-d": "find-links-new-tab",
+	    "<C>-x <C>-w": "find-links-this-tab",
+	    "<C>-x <C>-f": "find-links-new-tab",
 	    "<C>-b": "back-history",
 	    "<C>-f": "forward-history",
 	    "<C>-p": "previous-line",
@@ -52,7 +52,6 @@ function Settings(){
 	    "keydown": true,   
 	    "keyup": 0,    
 	    "keypress": 0, 
-	    "bar": false,      
 	    "read_keys": false,
 	    "str": "",
 	    "cmd": "",
@@ -73,7 +72,7 @@ function Settings(){
 	    "operation": ""
 	},
 	//add to here if new user editable css is added
-	"css": "/* Input Bar */\n#ChromEmacs_Bar{\n\n}\n/* Searching Links Color */\n.ChromEmacs_Links{\n\n}\n/* Links number values that have been matched */\n.ChromEmacs_Links_Span{\n\n}\n/* Nothing yet */\n.ChromEmacs_Search{\n\n}\n",
+	"css": "/* Input Bar */\n#ChromEmacs_Bar{\n\n}\n/* Searching Links Color */\n.ChromEmacs_Links{\n\n}\n/* Links number values that have been matched */\n.ChromEmacs_Links_Span{\n\n}\n/* Nothing yet */\n.ChromEmacs_Search{\n\n}\n/*Chrome help popup*/#ChromEmacs_Help{\n\n}\n",
 	//add to these when actions are added
 	"_actions_": {
 	    "no-defaults": "Toggle no defaults on/off",
