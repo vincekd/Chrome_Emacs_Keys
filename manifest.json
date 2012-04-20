@@ -18,5 +18,5 @@
     "name": "ChromEmacs",
     "options_page": "options.html",
     "permissions": [ "tabs", "bookmarks", "clipboardRead", "\u003Call_urls\u003E" ],
-    "version": "1.2"
+    "version": "1.3"
 }

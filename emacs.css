@@ -1,14 +1,13 @@
 .ChromEmacs_Links {
     margin:0px;
     padding:0px 0px 0px 0px;
-    /*background:#4A8;*/
     background:#5C59AB;
     color: #DDD;
-    /*text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
-    color: #CCC;
-    color:#000;*/
     position:absolute;
     min-width:16px;
+    font-family:"Times New Roman", Times, serif;
+    line-height:1;
+    font-style:normal;
     font-size:12px;
     text-align:center;
     opacity:1;
@@ -20,26 +19,7 @@
 
 .ChromEmacs_Links_Span {
     color: #999;
-    /*color:#302505;*/
 }
-
-/* #ChromEmacs_Bar { */
-/*     position:fixed; */
-/*     margin:0px; */
-/*     background:#5C59AB; */
-/*     color:#CCC; */
-/*     width:100%; */
-/*     display:block; */
-/*     z-index:99999999999; */
-/*     text-align:left; */
-/*     opacity:1; */
-/*     border-top:3px solid #000; */
-/*     bottom:0px; */
-/*     left:0px; */
-/*     padding:5px; */
-/*     padding-left:15px; */
-/*     padding-right:15px; */
-/* } */
 
 #ChromEmacs_Bar {
     position:fixed;
@@ -56,6 +36,10 @@
     right:0px;
     height:20px;
     padding:6px 15px 6px 15px;
+    font-family:"Times New Roman", Times, serif;
+    font-style:normal;
+    font-size:14px;
+    line-height:1;
 }
 
 #ChromEmacs_Bar div {
@@ -120,7 +104,3 @@ span.ChromEmacs_Search {
     -webkit-user-select: none;
     user-select: none;
 }
-
-/*body.ChromEmacs_Search ::selection {
-    background: #9F9;
-}*/
