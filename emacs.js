@@ -224,7 +224,8 @@ function ChromEmacs(){
 	    var help = $("#" + that.CONSTS.help );
 	    if( help.length !== 0 ){
 		help.fadeOut( 'fast', function(){
-		    help.remove();
+		    $("html").removeClass( that.CONSTS.css.help );
+		    help.remove()
 		});
 	    } else {
 		var div = '<div id="' + that.CONSTS.help + '" style="display:none;"><div></div></div>';
