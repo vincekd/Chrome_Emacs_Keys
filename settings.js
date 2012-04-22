@@ -26,7 +26,8 @@ function Settings(){
 	    "<C>-<M>-b": "bookmark-page",
 	    "<M>-u": "toggle-chromemacs",
 	    "<M>-q": "no-defaults",
-	    "<C>-h": "display-help"
+	    "<C>-h": "display-help",
+	    "<C>-c": "pass-through-mode"
 	},
 	"modifiers": {
 	    "Control": "<C>-",
@@ -47,7 +48,8 @@ function Settings(){
 	    }
 	},
 	"exclusions": [],
-	"no_defaults": false,
+	"no_defaults": true,
+	"pass_through": false,
 	"default_state": {
 	    "keydown": true,   
 	    "keyup": 0,    

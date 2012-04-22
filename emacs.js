@@ -1,6 +1,7 @@
 //TODO: finish searching page without window.find()
 //TODO: focus/unfocus text fields
 //TODO: disable all inputs on pageload- google
+//TODO: Make a default pass-through key combination
 function ChromEmacs(){
     "use strict";
 
@@ -26,23 +27,41 @@ function ChromEmacs(){
 	//TODO: handle special keys {esc, arrows, etc.}
 
 	var pos = {"no_prop":false,"no_def":false},
-	neg = {"no_prop":true,"no_def":true};
+	neg = {"no_prop":true,"no_def":true},
+	act = null;
 
 	if( state[info.type] !== true && state[info.type] > 0 ){
 	    state[info.type]--;
 	    return neg;
 	}
 
-	if( state.unbind || !state[info.type] ){
-	    if( (info.cmd in that.cmds) && 
-		that.cmds[info.cmd] === "toggle-chromemacs" &&
-	      state[info.type] !== 0 ){
-		that.actions[that.cmds[info.cmd]]();
+	if( info.cmd in that.cmds ){
+	    act = that.cmds[info.cmd];
+	}
+	
+	//state unbind
+	if( state.unbind || state.pass_through ){
+	    if( act === "toggle-chromemacs" ){
+		executeAction( act );
 		return neg;
-	    } 
+	    }
 	    return pos;
 	}
 
+	// if( state.unbind || !state[info.type] ){
+	//     if( (info.cmd in that.cmds) && state[info.type] !== 0 ){
+	// 	if( that.cmds[info.cmd] === "toggle-chromemacs" ){
+	// 	    that.actions[that.cmds[info.cmd]]();
+	// 	    return neg;
+	// 	} else if( that.cmds[info.cmd] === "pass-through-mode" ){
+	// 	    //TODO: fix - move outside this block
+	// 	    console.log( "hi" );
+	// 	}
+	//     }
+	//     return pos;
+	// }
+
+	//redo to accomodate new key
 	if( info.key === info.cmd || info.cmd === "" ){
 	    if( state.read_keys && info.key !== "" ){
 		if( state.fn !== null ){
@@ -50,7 +69,7 @@ function ChromEmacs(){
 		    return neg;
 		}
 	    }
-	    return pos;	    
+	    return pos;
 	}
 
 	pos.no_def = (that.no_defaults) ? true : false;
@@ -238,6 +257,9 @@ function ChromEmacs(){
 		help.fadeIn( 'fast' );
 	    }
 	    return {"bar":true};
+	},
+	"pass-through-mode": function( info ){
+	    state.pass_through = !state.pass_through;
 	}
     };
 
