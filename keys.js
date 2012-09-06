@@ -72,7 +72,7 @@ function KeyReader( emacs ){
     function getModified( obj ){
 	var str = obj.ctrl ? (emacs.modifiers["Control"]||"") : "";
 	str += obj.alt ? (emacs.modifiers["Alt"]||"") : "";
-	str += obj.meta ? (emacs.modifers["Meta"]||"") : "";
+	str += obj.meta ? (emacs.modifiers["Meta"]||"") : "";
 	str += obj.key;
 	obj.cmd = str;
     }
